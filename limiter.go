@@ -5,7 +5,7 @@ type Limiter chan int
 
 // New instanciates a new Limiter
 // limit: the max number of goroutines running at a time
-func New(limit int) *Limiter {
+func New(limit int) Limiter {
 	if limit <= 0 {
 		limit = 1
 	}
@@ -13,23 +13,23 @@ func New(limit int) *Limiter {
 	for i := 0; i < limit; i++ {
 		c <- i
 	}
-	return &c
+	return c
 }
 
 // Execute will queue jobs, thanks to how channels work
 // job: the function you want to be run on this limiter
-func (c *Limiter) Execute(job func()) {
-	ticket := <-*c
+func (c Limiter) Execute(job func()) {
+	ticket := <-c
 	go func() {
 		job()
-		*c <- ticket
+		c <- ticket
 	}()
 }
 
 // Wait waits that all jobs are done
 // Wait have to be called only once per instance
-func (c *Limiter) Wait() {
-	for i := 0; i < cap(*c); i++ {
-		<-*c
+func (c Limiter) Wait() {
+	for i := 0; i < cap(c); i++ {
+		<-c
 	}
 }
