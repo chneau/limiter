@@ -1,7 +1,7 @@
 package limiter
 
 // Limiter ...
-type Limiter chan int
+type Limiter chan interface{}
 
 // New instanciates a new Limiter
 // limit: the max number of goroutines running at a time
@@ -11,7 +11,7 @@ func New(limit int) Limiter {
 	}
 	c := make(Limiter, limit)
 	for i := 0; i < limit; i++ {
-		c <- i
+		c <- nil
 	}
 	return c
 }
