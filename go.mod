@@ -1,3 +1,3 @@
 module github.com/chneau/limiter
 
-go 1.15
+go 1.27
